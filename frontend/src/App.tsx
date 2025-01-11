@@ -1,10 +1,10 @@
-import AccountDeals from "./AccountDeals"
+import AllDeals from "./AllDeals.tsx";
 
 function App() {
 
   return (
     <div>
-      <AccountDeals />
+      <AllDeals />
     </div>
   )
 }
