@@ -9,6 +9,8 @@ import {
     FormControl,
     Select,
     MenuItem,
+    TextField,
+    InputLabel,
     Table, TableBody,
     TableCell,
     TableContainer, TableHead, TableRow,
@@ -22,8 +24,9 @@ interface AccountDealsProps {
 type FilterStatus = 'None' | 'Proposal' | 'Pitch' | 'Approved';
 
 const AccountDeals: React.FC<AccountDealsProps> = ({ organization_id, organization_name }) => {
-    const [deals, setDeals] = useState<Deal[]>();
+    const [deals, setDeals] = useState<Deal[]>([]);
     const [filterStatus, setFilterStatus] = useState<FilterStatus>('None');
+    const [filterYear, setFilterYear] = useState<number | string>('2025');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,22 +35,23 @@ const AccountDeals: React.FC<AccountDealsProps> = ({ organization_id, organizati
     };
 
     fetchData();
-  }, []);
+  }, [organization_id]);
 
-  let filteredDeals = deals;
-
-    if (filterStatus !== 'None') {
-        filteredDeals = deals?.filter((deal) => deal.status === filterStatus);
-    }
+    // Filter by Status and Year
+    const filteredDeals = deals
+        .filter((deal) => filterStatus === 'None' || deal.status === filterStatus)
+        .filter((deal) => !filterYear || new Date(deal.created_at).getFullYear() === Number(filterYear));
 
   return (
     <div>
-        <Card sx={{  maxWidth: 1920 }}>
+        <Card sx={{ maxWidth: 1920, marginBottom: 3 }}>
             <CardHeader
                 title={`${organization_name} Deals`}
             />
             <CardContent>
+                {/* TODO: Put these filter options into separate components */}
                 <FormControl>
+                    <InputLabel id="filter-status-label">Status</InputLabel>
                     <Select
                         value={filterStatus}
                         onChange={(event) => setFilterStatus(event.target.value as FilterStatus)}
@@ -58,7 +62,17 @@ const AccountDeals: React.FC<AccountDealsProps> = ({ organization_id, organizati
                         <MenuItem value="Approved">Approved</MenuItem>
                     </Select>
                 </FormControl>
+                <TextField
+                    label="Filter Year"
+                    type="number"
+                    value={filterYear}
+                    onChange={(event) => setFilterYear(event.target.value)}
+                    style={{ marginLeft: 16 }}
+                />
 
+                <hr style={{ margin: '16px 0' }} />
+
+                {/* Render filtered deals data*/}
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
@@ -80,7 +94,7 @@ const AccountDeals: React.FC<AccountDealsProps> = ({ organization_id, organizati
                                     <TableCell component="th" scope="row">
                                         {deal.status}
                                     </TableCell>
-                                    <TableCell>{deal.amount}</TableCell>
+                                    <TableCell>${deal.amount}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
