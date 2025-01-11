@@ -25,3 +25,8 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+app.get("/api/organizations", (req, res) => {
+  const rows = db.prepare("SELECT * FROM organizations").all();
+  res.json(rows);
+});

@@ -1,10 +1,10 @@
-import TestComponent from "./TestComponent"
+import AccountDeals from "./AccountDeals"
 
 function App() {
 
   return (
     <div>
-      <TestComponent />
+      <AccountDeals />
     </div>
   )
 }
