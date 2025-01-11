@@ -36,6 +36,7 @@ function initializeDatabase() {
       account_id INTEGER NOT NULL,
       name TEXT NOT NULL,
       amount REAL NOT NULL,
+      status TEXT CHECK(status IN ('Proposal', 'Pitch', 'Approved')) DEFAULT 'Proposal',
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );

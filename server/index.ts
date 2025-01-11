@@ -64,6 +64,7 @@ app.get("/api/deals/:organization_id", (req, res) => {
         deals.id,
         deals.name,
         deals.amount,
+        deals.status,
         deals.created_at,
         deals.updated_at,
         accounts.id

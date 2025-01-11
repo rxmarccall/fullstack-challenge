@@ -22,6 +22,7 @@ export interface Deal
     account_id: number,
     name: string,
     amount: number,
+    status: string,
     created: Date,
     updated: Date
 }

@@ -6,6 +6,9 @@ import {
     CardContent,
     CardHeader,
     Paper,
+    FormControl,
+    Select,
+    MenuItem,
     Table, TableBody,
     TableCell,
     TableContainer, TableHead, TableRow,
@@ -16,19 +19,14 @@ interface AccountDealsProps {
     organization_name: string;
 }
 
+type FilterStatus = 'None' | 'Proposal' | 'Pitch' | 'Approved';
+
 const AccountDeals: React.FC<AccountDealsProps> = ({ organization_id, organization_name }) => {
-    // const [organizations, setOrganizations] = useState<Organization[]>()
-    // const [accounts, setAccounts] = useState<Account[]>();
     const [deals, setDeals] = useState<Deal[]>();
+    const [filterStatus, setFilterStatus] = useState<FilterStatus>('None');
 
   useEffect(() => {
     const fetchData = async () => {
-        // const organizations = await getOrganizations();
-        // setOrganizations(organizations);
-
-        // const accounts = await getAccounts(account.organization_id);
-        // setAccounts(accounts);
-
         const deals = await getDeals(organization_id);
         setDeals(deals);
     };
@@ -36,23 +34,42 @@ const AccountDeals: React.FC<AccountDealsProps> = ({ organization_id, organizati
     fetchData();
   }, []);
 
+  let filteredDeals = deals;
+
+    if (filterStatus !== 'None') {
+        filteredDeals = deals?.filter((deal) => deal.status === filterStatus);
+    }
+
   return (
     <div>
-        <Card sx={{ minWidth: 275, maxWidth: 500 }}>
+        <Card sx={{  maxWidth: 1920 }}>
             <CardHeader
                 title={`${organization_name} Deals`}
             />
             <CardContent>
+                <FormControl>
+                    <Select
+                        value={filterStatus}
+                        onChange={(event) => setFilterStatus(event.target.value as FilterStatus)}
+                    >
+                        <MenuItem value="None">All</MenuItem>
+                        <MenuItem value="Proposal">Proposal</MenuItem>
+                        <MenuItem value="Pitch">Pitch</MenuItem>
+                        <MenuItem value="Approved">Approved</MenuItem>
+                    </Select>
+                </FormControl>
+
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
-                                <TableCell align="right">Amount</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell>Amount</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {deals?.map((deal) => (
+                            {filteredDeals?.map((deal) => (
                                 <TableRow
                                     key={deal.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -60,7 +77,10 @@ const AccountDeals: React.FC<AccountDealsProps> = ({ organization_id, organizati
                                     <TableCell component="th" scope="row">
                                         {deal.name}
                                     </TableCell>
-                                    <TableCell align="right">{deal.amount}</TableCell>
+                                    <TableCell component="th" scope="row">
+                                        {deal.status}
+                                    </TableCell>
+                                    <TableCell>{deal.amount}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
